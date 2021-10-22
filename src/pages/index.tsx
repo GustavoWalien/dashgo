@@ -1,3 +1,4 @@
+import { GetServerSideProps } from 'next';
 import { useContext } from 'react';
 import { Flex, Button, Stack, FormLabel, FormControl } from '@chakra-ui/react';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -84,4 +85,12 @@ export default function SignIn() {
       </Flex>
     </Flex>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  console.log(ctx.req.cookies);
+
+  return { 
+    props: {}
+  }
 }
