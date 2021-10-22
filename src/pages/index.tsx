@@ -1,11 +1,15 @@
 import { GetServerSideProps } from 'next';
 import { useContext } from 'react';
+import { parseCookies } from 'nookies'
 import { Flex, Button, Stack, FormLabel, FormControl } from '@chakra-ui/react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Input } from '../components/Form/Input';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { AuthContext } from '../contexts/AuthContext';
+import { redirect } from 'next/dist/server/api-utils';
+import { withSSRGuest } from '../utils/withSSRGuest';
+import users from './users';
 
 type SignInFormData = {
   email: string;
@@ -87,10 +91,8 @@ export default function SignIn() {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  console.log(ctx.req.cookies);
-
-  return { 
+export const getServerSideProps = withSSRGuest(async (ctx) => {
+  return {
     props: {}
   }
-}
+})

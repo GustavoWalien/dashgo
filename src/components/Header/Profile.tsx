@@ -1,7 +1,9 @@
 import { Box, Flex, Avatar, Text } from "@chakra-ui/react";
 import { useContext, useEffect } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
-import { apiAuth } from "../../services/apiAuth";
+import { setupAPIClient } from "../../services/apiAuth";
+import { withSSRAuth } from "../../utils/withSSRAuth";
+import { apiAuth } from "../../services/apiClient";
 
 interface ProfileProps {
   showProfileData?: boolean;
@@ -35,3 +37,14 @@ export function Profile({ showProfileData = true }: ProfileProps) {
     </Flex>
   );
 }
+
+export const getServerSideProps = withSSRAuth(async (ctx) => {
+  const apiClient = setupAPIClient(ctx)
+  const reponse = await apiClient.get('/me')
+
+  console.log(reponse.data)
+
+  return {
+    props: {}
+  }
+})
