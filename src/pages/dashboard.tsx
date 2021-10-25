@@ -3,6 +3,8 @@ import dynamic from "next/dynamic";
 import { Header } from "../components/Header";
 import { Sidebar } from "../components/Sidebar";
 import { ApexOptions } from 'apexcharts';
+import { withSSRAuth } from "../utils/withSSRAuth";
+import { setupAPIClient } from "../services/apiAuth";
 
 const Chart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
@@ -60,7 +62,8 @@ const series = [
   { name: 'series1', data: [31, 120, 10, 28, 61, 18, 109] }
 ];
 
-export default function Dashboard() {
+export default function Dashboard() { 
+
   return (
     <Flex direction="column" h="100vh">
       <Header />
@@ -92,3 +95,12 @@ export default function Dashboard() {
     </Flex>
   )
 }
+
+export const getServerSideProps = withSSRAuth(async (ctx) => {
+  const apiClient = setupAPIClient(ctx)
+  const response = await apiClient.get('/me')
+
+  return {
+    props: {}
+  }
+})

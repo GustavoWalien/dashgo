@@ -1,24 +1,24 @@
-import { Box, Flex, Avatar, Text } from "@chakra-ui/react";
+import { Box, Flex, Avatar, Text, HStack, Icon } from "@chakra-ui/react";
 import { useContext, useEffect } from "react";
+import { FiPower } from "react-icons/fi";
 import { AuthContext } from "../../contexts/AuthContext";
-import { setupAPIClient } from "../../services/apiAuth";
-import { withSSRAuth } from "../../utils/withSSRAuth";
 import { apiAuth } from "../../services/apiClient";
+import { useCan } from "../../services/hooks/useCan";
 
 interface ProfileProps {
   showProfileData?: boolean;
 }
 
 export function Profile({ showProfileData = true }: ProfileProps) {
-  const { user } = useContext(AuthContext)
+  const { user, signOut, isAuthenticated } = useContext(AuthContext)
+  const userCanSeeMetrics = useCan({
+    permissions: ['metrics:list']
+  })
 
   useEffect(() => {
-    apiAuth.get('/me').then(response => {
-      console.log('entrou')
-      console.log(response)
-    }).catch(err => console.error(err))
-  })
-  
+    apiAuth.get('/me').then(response => console.log(response))
+  }, [])
+
   return (
     <Flex align="center">
       {showProfileData && (
@@ -34,17 +34,22 @@ export function Profile({ showProfileData = true }: ProfileProps) {
       )}
 
       <Avatar size="md" name="Gustavo Martins" />
+
+      <HStack
+        spacing={["6", "8"]} 
+        py="1"
+        color="gray.300"
+        borderColor="gray.700"
+      >
+        <Icon
+          ml="4"
+          onClick={signOut}
+          as={FiPower}
+          fontSize="25"
+          cursor="pointer"
+          color="gray.300"
+        />
+      </HStack>
     </Flex>
   );
 }
-
-export const getServerSideProps = withSSRAuth(async (ctx) => {
-  const apiClient = setupAPIClient(ctx)
-  const reponse = await apiClient.get('/me')
-
-  console.log(reponse.data)
-
-  return {
-    props: {}
-  }
-})

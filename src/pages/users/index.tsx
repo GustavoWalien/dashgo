@@ -4,11 +4,12 @@ import { RiAddLine } from "react-icons/ri";
 import { Header } from "../../components/Header";
 import { Pagination } from "../../components/Pagination";
 import { Sidebar } from "../../components/Sidebar";
-import { getUsers, useUsers } from "../../services/hooks/useUsers";
+import { useUsers } from "../../services/hooks/useUsers";
 import { useState } from "react";
 import { queryClient } from "../../services/queryClient";
 import { api } from "../../services/api";
-import { GetServerSideProps } from "next";
+import { withSSRAuth } from "../../utils/withSSRAuth";
+import { setupAPIClient } from "../../services/apiAuth";
 
 export default function UserList({ users }) {
   const [page, setPage] = useState(1);
@@ -110,3 +111,15 @@ export default function UserList({ users }) {
     </Box>
   );
 }
+
+export const getServerSideProps = withSSRAuth(async (ctx) => {
+  const apiClient = setupAPIClient(ctx)
+  const response = await apiClient.get('/me')  
+
+  return {
+    props: {}
+  }
+}, {
+  permissions: ['metrics.list'],
+  roles: ['administrator'],
+})
