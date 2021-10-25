@@ -10,7 +10,7 @@ export function setupAPIClient(ctx = undefined) {
   let cookies = parseCookies(ctx)
 
   const apiAuth = axios.create({
-    baseURL: 'http://localhost:3333',
+    baseURL: 'http://localhost:3333/',
     headers: {
       Authorization: `Bearer ${cookies['dashgo.token']}`
     }
@@ -19,6 +19,7 @@ export function setupAPIClient(ctx = undefined) {
   apiAuth.interceptors.response.use(response => {
     return response
   }, (error: AxiosError) => {
+    console.log(error)
     if (error.response.status === 401) {
       if (error.response.data?.code === 'token.expired') {
         cookies = parseCookies(ctx)
